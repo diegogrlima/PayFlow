@@ -1,0 +1,86 @@
+# Build and publish output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Pp]ublish/
+artifacts/
+
+# Local application configuration (may contain credentials and tokens)
+appsettings.json
+appsettings.*.json
+!appsettings.example.json
+!appsettings.*.example.json
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+secrets.json
+*.secrets.json
+local.settings.json
+
+# ASP.NET Core user secrets and data-protection keys
+.microsoft/usersecrets/
+Microsoft/UserSecrets/
+DataProtection-Keys/
+*.key
+*.pem
+*.pfx
+*.p12
+*.cer
+*.crt
+
+# Local databases and data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+
+# Logs, diagnostics and coverage
+*.log
+logs/
+TestResults/
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+*.trx
+
+# IDE and user-specific files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# NuGet packages and generated files
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts.json
+
+# HTTP client files that may store local tokens
+*.http.user
+http-client.env.json
+http-client.private.env.json
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
