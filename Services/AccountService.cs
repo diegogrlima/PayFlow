@@ -7,14 +7,15 @@ using PayFlow.Repositories.Interfaces;
 namespace PayFlow.Services
 {
     public class AccountService(IAccountRepository repository,
-        IValidator<CreateAccountRequest> validator)
+        IValidator<CreateAccountRequest> accountValidator,
+        IValidator<CreateDepositRequest> depositValidator)
     {
 
         public async Task<AccountResponse> CreateAsync(
             CreateAccountRequest request,
             CancellationToken cancellationToken = default)
         {
-            await validator.ValidateAndThrowAsync(request, cancellationToken);
+            await accountValidator.ValidateAndThrowAsync(request, cancellationToken);
 
             var account = new Account(request.HolderName);
 
@@ -33,6 +34,25 @@ namespace PayFlow.Services
                 ?? throw new ResourceNotFoundException(nameof(id));
 
             return ToResponse(account);
+        }
+
+        public async Task<decimal> AddDepositAsync(
+            Guid id,
+            CreateDepositRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            await depositValidator.ValidateAndThrowAsync(
+                request,
+                cancellationToken: cancellationToken);
+
+            var account = await repository.GetByIdAsync(id, cancellationToken)
+                ?? throw new ResourceNotFoundException(nameof(id));
+
+            account.Deposit(request.Amount);
+
+            await repository.UpdateAsync(account, cancellationToken);
+
+            return account.Balance;
         }
 
         private static AccountResponse ToResponse(Account account) =>

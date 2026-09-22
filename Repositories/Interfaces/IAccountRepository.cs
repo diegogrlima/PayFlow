@@ -11,5 +11,9 @@ namespace PayFlow.Repositories.Interfaces
         Task AddAsync(
             Account account,
             CancellationToken cancellationToken = default);
+
+        Task UpdateAsync(
+            Account account,
+            CancellationToken cancellationToken = default);
     }
 }

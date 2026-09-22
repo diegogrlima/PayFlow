@@ -55,5 +55,17 @@
                     "O saldo não pode ser negativo.");
             }
         }
+
+        public void Deposit(decimal amount)
+        {
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(amount),
+                    "O valor do depósito deve ser maior que zero.");
+            }
+
+            Balance += amount;
+        }
     }
 }

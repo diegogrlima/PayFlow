@@ -10,6 +10,8 @@ namespace PayFlow.Configurations
         {
 
             services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateDepositRequestValidator>();
+
             services.AddScoped<AccountService>();
             return services;
         }
