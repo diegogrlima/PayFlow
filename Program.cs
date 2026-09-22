@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using PayFlow.Configurations;
-using PayFlow.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +9,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerConfiguration();
 
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
+builder.Services.AddRepositories();
 
 var app = builder.Build();
 
