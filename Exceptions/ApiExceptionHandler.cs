@@ -21,7 +21,17 @@ namespace PayFlow.Exceptions
                         .ToArray()))
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    Title = "Dados inválidos"
+                    Title = "Dados inválidos",
+                    Extensions =
+                    {
+                        ["erros"]  = validation.Errors
+                            .GroupBy(error => error.PropertyName)
+                            .ToDictionary(
+                                group => group.Key,
+                                group => group.Select(error => error.ErrorMessage)
+                                .ToList()
+                            )
+                    }
                 },
 
                 ResourceNotFoundException => new ProblemDetails

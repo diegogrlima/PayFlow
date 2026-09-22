@@ -9,8 +9,11 @@ namespace PayFlow.DTOs.Account.Validators
         {
             RuleFor(x => x.HolderName)
                 .NotEmpty()
+                 .WithMessage("O nome do titular é obrigatório.")
                 .MinimumLength(3)
-                .MaximumLength(120);
+                    .WithMessage("O nome deve possuir pelo menos 3 caracteres.")
+                .MaximumLength(120)
+                    .WithMessage("O nome deve possuir no máximo 120 caracteres.");
         }
     }
 }
