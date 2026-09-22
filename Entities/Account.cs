@@ -38,10 +38,10 @@
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(holderName);
 
-            if (holderName.Trim().Length > 150)
+            if (holderName.Trim().Length < 3 || holderName.Trim().Length > 120)
             {
                 throw new ArgumentException(
-                    "O nome do titular deve ter no máximo 150 caracteres.",
+                    "O nome do titular deve ter entre 3 e 120 caracteres.",
                     nameof(holderName));
             }
         }

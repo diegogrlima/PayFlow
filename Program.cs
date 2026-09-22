@@ -10,6 +10,7 @@ builder.Services.AddSwaggerConfiguration();
 
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddRepositories();
+builder.Services.AddServices();
 
 var app = builder.Build();
 

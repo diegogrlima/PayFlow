@@ -84,3 +84,6 @@ Desktop.ini
 *.bak
 *.swp
 *~
+
+# Local project specifications
+PayFlow-MVP-Especificacoes.md

@@ -17,7 +17,7 @@ namespace PayFlow.Data.Configurations
 
             builder.Property(account => account.HolderName)
                 .IsRequired()
-                .HasMaxLength(150);
+                .HasMaxLength(120);
 
             builder.Property(account => account.Balance)
                 .IsRequired()
