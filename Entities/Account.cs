@@ -67,5 +67,23 @@
 
             Balance += amount;
         }
+
+        public void Debit(decimal amount)
+        {
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(amount),
+                    "O valor do débito deve ser maior que zero.");
+            }
+
+            if (amount > Balance)
+            {
+                throw new InvalidOperationException(
+                    "Saldo insuficiente para realizar o débito.");
+            }
+
+            Balance -= amount;
+        }
     }
 }

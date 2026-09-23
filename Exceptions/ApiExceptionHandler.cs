@@ -41,6 +41,13 @@ namespace PayFlow.Exceptions
                     Detail = exception.Message
                 },
 
+                BusinessRuleException => new ProblemDetails
+                {
+                    Status = StatusCodes.Status422UnprocessableEntity,
+                    Title = "Violação de regra de negócio",
+                    Detail = exception.Message
+                },
+
                 _ => new ProblemDetails
                 {
                     Status = StatusCodes.Status500InternalServerError,
