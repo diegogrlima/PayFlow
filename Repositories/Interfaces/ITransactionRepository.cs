@@ -10,6 +10,9 @@ namespace PayFlow.Repositories.Interfaces
 
         Task<IReadOnlyList<Transaction>> GetHistoryByAccountIdAsync(
             Guid accountId,
+            string? type,
+            int page = 1,
+            int pageSize = 10,
             CancellationToken cancellationToken = default);
 
         Task AddAsync(

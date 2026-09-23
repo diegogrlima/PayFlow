@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PayFlow.DTOs.Account;
+using PayFlow.DTOs.Transactions;
 using PayFlow.Services;
 
 namespace PayFlow.Controllers
@@ -7,7 +8,8 @@ namespace PayFlow.Controllers
     [Route("api/accounts")]
     [ApiController]
     public class AccountController(
-        AccountService service) : ControllerBase
+        AccountService service,
+        TransactionService transactionService) : ControllerBase
     {
         [HttpPost]
         public async Task<ActionResult<AccountResponse>> Create(
@@ -37,6 +39,24 @@ namespace PayFlow.Controllers
             CancellationToken cancellationToken)
         {
             var result = await service.AddDepositAsync(id, request, cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{accountId:guid}/transactions")]
+        public async Task<ActionResult<IEnumerable<TransactionResponse>>> GetAllTransactions(
+            Guid accountId,
+            string? type,
+            int page = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await transactionService.GetAllTransactionsAsync(
+                accountId,
+                type,
+                page,
+                pageSize,
+                cancellationToken);
 
             return Ok(result);
         }

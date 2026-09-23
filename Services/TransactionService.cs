@@ -82,6 +82,29 @@ namespace PayFlow.Services
             return ToResponse(transaction);
         }
 
+        public async Task<IEnumerable<TransactionResponse>> GetAllTransactionsAsync(
+            Guid accountId,
+            string? type,
+            int page = 1,
+            int pageSize = 10,
+            CancellationToken cancellationToken = default)
+        {
+            if (page < 1)
+                page = 1;
+
+            if (pageSize < 10 || pageSize > 100)
+                pageSize = 10;
+
+            var transactions = await repository.GetHistoryByAccountIdAsync(
+                accountId,
+                type,
+                page,
+                pageSize,
+                cancellationToken);
+
+            return transactions.Select(ToResponse);
+        }
+
         private static TransactionResponse ToResponse(Transaction transaction) =>
             new(
                 transaction.Id,
