@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using PayFlow.DTOs.Account.Validators;
+using PayFlow.DTOs.Users.Validators;
 using PayFlow.Services;
+using PayFlow.Services.Interfaces;
 
 namespace PayFlow.Configurations
 {
@@ -11,7 +13,11 @@ namespace PayFlow.Configurations
 
             services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateDepositRequestValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateUserRequestValidator>();
 
+            services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
+
+            services.AddScoped<UserService>();
             services.AddScoped<AccountService>();
             services.AddScoped<TransactionService>();
             return services;
