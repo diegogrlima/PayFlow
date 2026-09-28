@@ -7,6 +7,7 @@ namespace PayFlow.DTOs.Users.Validators
         public CreateUserRequestValidator()
         {
             RuleFor(x => x.Email)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                     .WithMessage("O e-mail é obrigatório.")
                 .MaximumLength(255)
@@ -15,6 +16,7 @@ namespace PayFlow.DTOs.Users.Validators
                     .WithMessage("O e-mail informado não é válido.");
 
             RuleFor(x => x.Password)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                     .WithMessage("A senha é obrigatória.")
                 .MinimumLength(8)

@@ -8,6 +8,7 @@ namespace PayFlow.DTOs.Account.Validators
         public CreateAccountRequestValidator()
         {
             RuleFor(x => x.HolderName)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                  .WithMessage("O nome do titular é obrigatório.")
                 .MinimumLength(3)
