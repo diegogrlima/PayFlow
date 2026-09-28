@@ -48,6 +48,13 @@ namespace PayFlow.Exceptions
                     Detail = exception.Message
                 },
 
+                InvalidCredentialsException => new ProblemDetails
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    Title = "Credenciais inválidas",
+                    Detail = exception.Message,
+                },
+
                 _ => new ProblemDetails
                 {
                     Status = StatusCodes.Status500InternalServerError,

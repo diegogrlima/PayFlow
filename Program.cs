@@ -13,6 +13,7 @@ builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddServices();
 
+builder.Services.AddJwtConfiguration(builder.Configuration);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();

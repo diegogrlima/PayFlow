@@ -16,7 +16,9 @@ namespace PayFlow.Configurations
             services.AddValidatorsFromAssemblyContaining<CreateUserRequestValidator>();
 
             services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
+            services.AddScoped<ITokenService, JwtTokenService>();
 
+            services.AddScoped<AuthService>();
             services.AddScoped<UserService>();
             services.AddScoped<AccountService>();
             services.AddScoped<TransactionService>();
