@@ -19,10 +19,10 @@ namespace PayFlow.Infrastructure.DependencyInjection
             new Dictionary<(string, string), (string, string)>
             {
                 [("Users", "Create")] = ("Cadastrar usuário", "Cria um novo usuário. Esta operação é pública."),
-                [("Users", "GetById")] = ("Consultar o próprio usuário", "Retorna os dados do usuário autenticado."),
                 [("Auth", "Login")] = ("Autenticar usuário", "Valida as credenciais e retorna os tokens de acesso e renovação."),
                 [("Auth", "Refresh")] = ("Renovar tokens", "Rotaciona o refresh token e retorna um novo par de tokens."),
                 [("Auth", "Revoke")] = ("Revogar refresh token", "Invalida um refresh token. A operação é idempotente."),
+                [("Auth", "GetCurrent")] = ("Consultar o usuário autenticado", "Retorna os dados do usuário identificado pelo access token."),
                 [("Account", "Create")] = ("Criar conta", "Cria uma conta vinculada ao usuário autenticado."),
                 [("Account", "GetById")] = ("Consultar conta", "Retorna uma conta pertencente ao usuário autenticado."),
                 [("Account", "AddDeposit")] = ("Realizar depósito", "Adiciona saldo a uma conta pertencente ao usuário autenticado."),

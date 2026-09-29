@@ -18,18 +18,10 @@ namespace PayFlow.Controllers
         {
             var result = await service.AddUserAsync(request, cancellationToken);
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { result.Id },
-                result);
-        }
-
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<UserResponse>> GetById(
-            Guid id,
-            CancellationToken cancellationToken)
-        {
-            return Ok(await service.GetByIdAsync(id, cancellationToken));
+            return CreatedAtRoute(
+                routeName: "GetCurrentUser",
+                routeValues: null,
+                value: result);
         }
     }
 }

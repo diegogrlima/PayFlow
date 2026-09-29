@@ -42,19 +42,14 @@ public class UserService(
         return ToResponse(user);
     }
 
-    public async Task<UserResponse> GetByIdAsync(
-        Guid id,
+    public async Task<UserResponse> GetCurrentAsync(
         CancellationToken cancellationToken = default)
     {
-        if (id != currentUser.UserId)
-        {
-            throw new ResourceNotFoundException(
-                $"Usuário '{id}' não encontrado.");
-        }
+        var userId = currentUser.UserId;
 
-        var user = await repository.GetByIdAsync(id, cancellationToken)
+        var user = await repository.GetByIdAsync(userId, cancellationToken)
             ?? throw new ResourceNotFoundException(
-                $"Usuário '{id}' não encontrado.");
+                "Usuário autenticado não encontrado.");
 
         return ToResponse(user);
     }
