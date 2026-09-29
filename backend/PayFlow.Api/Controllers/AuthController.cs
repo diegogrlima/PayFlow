@@ -19,5 +19,23 @@ namespace PayFlow.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("refresh")]
+        public async Task<ActionResult<LoginResponse>> Refresh(
+            RefreshTokenRequest request,
+            CancellationToken cancellationToken)
+        {
+            var result = await service.RefreshAsync(request, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpPost("revoke")]
+        public async Task<IActionResult> Revoke(
+            RevokeTokenRequest request,
+            CancellationToken cancellationToken)
+        {
+            await service.RevokeAsync(request, cancellationToken);
+            return NoContent();
+        }
     }
 }

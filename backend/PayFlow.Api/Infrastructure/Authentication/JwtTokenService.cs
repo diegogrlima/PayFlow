@@ -4,6 +4,8 @@ using PayFlow.Domain.Entities;
 using PayFlow.Features.Authentication.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PayFlow.Infrastructure.Authentication
 {
@@ -45,6 +47,17 @@ namespace PayFlow.Infrastructure.Authentication
                 .WriteToken(token);
 
             return tokenString;
+        }
+
+        public string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        }
+
+        public string HashRefreshToken(string token)
+        {
+            return Convert.ToHexString(
+                SHA256.HashData(Encoding.UTF8.GetBytes(token)));
         }
     }
 }
