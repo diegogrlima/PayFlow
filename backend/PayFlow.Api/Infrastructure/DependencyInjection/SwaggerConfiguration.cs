@@ -10,17 +10,29 @@ namespace PayFlow.Infrastructure.DependencyInjection
         {
             services.AddSwaggerGen(static option =>
             {
+                option.TagActionsBy(api =>
+                [
+                    SwaggerDocumentationFilter.GetTag(
+                        api.ActionDescriptor.RouteValues["controller"])
+                ]);
+
+                option.OrderActionsBy(api =>
+                    $"{SwaggerDocumentationFilter.GetTagOrder(api.ActionDescriptor.RouteValues["controller"]):D2}_" +
+                    $"{api.RelativePath}_{api.HttpMethod}");
+
+                option.OperationFilter<SwaggerDocumentationFilter>();
+                option.DocumentFilter<SwaggerDocumentationFilter>();
+
                 option.SwaggerDoc(
                     "v1",
                     new OpenApiInfo
                     {
-                        Title = "PayFlow",
+                        Title = "PayFlow API",
                         Description =
                        """
-                                API REST para criação e consulta de contas, realização de 
-                                transferências e consulta do histórico de transações. As operações 
-                                validam saldo, contas envolvidas e valores antes de concluir cada 
-                                transferência.
+                                API REST para gerenciamento de usuários, autenticação, contas e
+                                transferências financeiras. Para acessar as operações protegidas,
+                                autentique-se e informe o access token no botão Authorize.
                         """,
                         Version = "v1",
                         Contact = new OpenApiContact
