@@ -3,11 +3,13 @@ using PayFlow.Features.Accounts.DTOs;
 using PayFlow.Features.Transactions.DTOs;
 using PayFlow.Features.Accounts;
 using PayFlow.Features.Transactions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PayFlow.Controllers
 {
     [Route("api/accounts")]
     [ApiController]
+    [Authorize]
     public class AccountController(
         AccountService service,
         TransactionService transactionService) : ControllerBase

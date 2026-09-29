@@ -10,7 +10,8 @@ namespace PayFlow.Features.Users;
 public class UserService(
     IUserRepository repository,
     IValidator<CreateUserRequest> createUserValidator,
-    IPasswordHasher passwordHasher)
+    IPasswordHasher passwordHasher,
+    ICurrentUser currentUser)
 {
     public async Task<UserResponse> AddUserAsync(
         CreateUserRequest request,
@@ -45,6 +46,12 @@ public class UserService(
         Guid id,
         CancellationToken cancellationToken = default)
     {
+        if (id != currentUser.UserId)
+        {
+            throw new ResourceNotFoundException(
+                $"Usuário '{id}' não encontrado.");
+        }
+
         var user = await repository.GetByIdAsync(id, cancellationToken)
             ?? throw new ResourceNotFoundException(
                 $"Usuário '{id}' não encontrado.");

@@ -3,12 +3,14 @@ using PayFlow.Features.Transactions.DTOs;
 using PayFlow.Domain.Entities;
 using PayFlow.Common.Exceptions;
 using PayFlow.Infrastructure.Repositories.Interfaces;
+using PayFlow.Features.Authentication.Interfaces;
 
 namespace PayFlow.Features.Transactions
 {
     public class TransactionService(ITransactionRepository repository,
         IAccountRepository accountRepository,
         IUnitOfWork unitOfWork,
+        ICurrentUser currentUser,
         IValidator<CreateTransactionRequest> transactionValidator)
     {
         public async Task<TransactionResponse> AddTransactionAsync(
@@ -23,8 +25,9 @@ namespace PayFlow.Features.Transactions
 
             try
             {
-                var sourceAccount = await accountRepository.GetByIdAsync(
+                var sourceAccount = await accountRepository.GetByIdAndUserIdAsync(
                     request.SourceAccountId,
+                    currentUser.UserId,
                     cancellationToken);
 
                 if (sourceAccount is null)
@@ -79,6 +82,22 @@ namespace PayFlow.Features.Transactions
                 ?? throw new ResourceNotFoundException(
                     $"Transação '{id}' não encontrada.");
 
+            var userId = currentUser.UserId;
+            var sourceAccount = await accountRepository.GetByIdAndUserIdAsync(
+                transaction.SourceAccountId,
+                userId,
+                cancellationToken);
+            var destinationAccount = await accountRepository.GetByIdAndUserIdAsync(
+                transaction.DestinationAccountId,
+                userId,
+                cancellationToken);
+
+            if (sourceAccount is null && destinationAccount is null)
+            {
+                throw new ResourceNotFoundException(
+                    $"Transação '{id}' não encontrada.");
+            }
+
             return ToResponse(transaction);
         }
 
@@ -89,6 +108,13 @@ namespace PayFlow.Features.Transactions
             int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
+            _ = await accountRepository.GetByIdAndUserIdAsync(
+                accountId,
+                currentUser.UserId,
+                cancellationToken)
+                ?? throw new ResourceNotFoundException(
+                    $"Conta '{accountId}' não encontrada.");
+
             if (page < 1)
                 page = 1;
 

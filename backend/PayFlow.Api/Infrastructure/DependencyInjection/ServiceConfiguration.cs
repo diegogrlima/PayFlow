@@ -21,6 +21,8 @@ namespace PayFlow.Infrastructure.DependencyInjection
 
             services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
             services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
 
             services.AddScoped<AuthService>();
             services.AddScoped<UserService>();

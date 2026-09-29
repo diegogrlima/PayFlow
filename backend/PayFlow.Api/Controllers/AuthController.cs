@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using PayFlow.Features.Authentication.DTOs;
 using PayFlow.Features.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PayFlow.Controllers
 {
     [Route("api/auth")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthController(AuthService service) : ControllerBase
     {
         [HttpPost("login")]

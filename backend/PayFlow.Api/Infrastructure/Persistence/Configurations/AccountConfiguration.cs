@@ -26,6 +26,12 @@ namespace PayFlow.Infrastructure.Persistence.Configurations
             builder.Property(account => account.CreatedAtUtc)
                 .IsRequired();
 
+            builder.HasOne(account => account.User)
+                .WithMany(user => user.Accounts)
+                .HasForeignKey(account => account.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.ToTable(
                 "TB_Accounts",
                 table => table.HasCheckConstraint(

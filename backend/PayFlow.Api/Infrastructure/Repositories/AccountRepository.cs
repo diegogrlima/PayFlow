@@ -16,6 +16,16 @@ namespace PayFlow.Infrastructure.Repositories
                 cancellationToken);
         }
 
+        public Task<Account?> GetByIdAndUserIdAsync(
+            Guid id,
+            Guid userId,
+            CancellationToken cancellationToken = default)
+        {
+            return dbContext.Accounts.SingleOrDefaultAsync(
+                account => account.Id == id && account.UserId == userId,
+                cancellationToken);
+        }
+
         public async Task AddAsync(
             Account account,
             CancellationToken cancellationToken = default)

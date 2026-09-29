@@ -31,6 +31,22 @@ namespace PayFlow.Infrastructure.DependencyInjection
                         },
                     }
                     );
+
+                option.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT",
+                        Description = "Informe apenas o access token JWT."
+                    });
+
+                option.AddSecurityRequirement(document =>
+                    new OpenApiSecurityRequirement
+                    {
+                        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+                    });
             });
 
             return services;

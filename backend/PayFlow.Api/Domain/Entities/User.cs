@@ -23,6 +23,8 @@ namespace PayFlow.Domain.Entities
 
         public DateTime CreatedAtUtc { get; private set; }
 
+        public ICollection<Account> Accounts { get; private set; } = [];
+
 
         private static void ValidateCredential(string credential)
         {

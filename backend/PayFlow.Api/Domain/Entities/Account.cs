@@ -6,18 +6,24 @@ namespace PayFlow.Domain.Entities
         {
         }
 
-        public Account(string holderName, decimal initialBalance = 0)
+        public Account(Guid userId, string holderName, decimal initialBalance = 0)
         {
+            ValidateUserId(userId);
             ValidateHolderName(holderName);
             ValidateBalance(initialBalance);
 
             Id = Guid.NewGuid();
+            UserId = userId;
             HolderName = holderName.Trim();
             Balance = initialBalance;
             CreatedAtUtc = DateTime.UtcNow;
         }
 
         public Guid Id { get; private set; }
+
+        public Guid UserId { get; private set; }
+
+        public User User { get; private set; } = null!;
 
         public string HolderName { get; private set; } = string.Empty;
 
@@ -43,6 +49,16 @@ namespace PayFlow.Domain.Entities
                 throw new ArgumentException(
                     "O nome do titular deve ter entre 3 e 150 caracteres.",
                     nameof(holderName));
+            }
+        }
+
+        private static void ValidateUserId(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentException(
+                    "O identificador do usuário é obrigatório.",
+                    nameof(userId));
             }
         }
 

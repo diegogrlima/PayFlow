@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using PayFlow.Features.Transactions.DTOs;
 using PayFlow.Features.Transactions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PayFlow.Controllers
 {
     [Route("api/transactions")]
     [ApiController]
+    [Authorize]
     public class TransactionController(TransactionService service) : ControllerBase
     {
         [HttpPost]

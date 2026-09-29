@@ -3,10 +3,13 @@ using PayFlow.Features.Accounts.DTOs;
 using PayFlow.Domain.Entities;
 using PayFlow.Common.Exceptions;
 using PayFlow.Infrastructure.Repositories.Interfaces;
+using PayFlow.Features.Authentication.Interfaces;
 
 namespace PayFlow.Features.Accounts
 {
     public class AccountService(IAccountRepository repository,
+        IUserRepository userRepository,
+        ICurrentUser currentUser,
         IValidator<CreateAccountRequest> accountValidator,
         IValidator<CreateDepositRequest> depositValidator)
     {
@@ -17,7 +20,13 @@ namespace PayFlow.Features.Accounts
         {
             await accountValidator.ValidateAndThrowAsync(request, cancellationToken);
 
-            var account = new Account(request.HolderName);
+            var userId = currentUser.UserId;
+
+            _ = await userRepository.GetByIdAsync(userId, cancellationToken)
+                ?? throw new ResourceNotFoundException(
+                    $"Usuário '{userId}' não encontrado.");
+
+            var account = new Account(userId, request.HolderName);
 
             await repository.AddAsync(account, cancellationToken);
 
@@ -30,7 +39,10 @@ namespace PayFlow.Features.Accounts
             CancellationToken cancellationToken = default)
         {
 
-            var account = await repository.GetByIdAsync(id, cancellationToken)
+            var account = await repository.GetByIdAndUserIdAsync(
+                id,
+                currentUser.UserId,
+                cancellationToken)
                 ?? throw new ResourceNotFoundException(nameof(id));
 
             return ToResponse(account);
@@ -45,7 +57,10 @@ namespace PayFlow.Features.Accounts
                 request,
                 cancellationToken: cancellationToken);
 
-            var account = await repository.GetByIdAsync(id, cancellationToken)
+            var account = await repository.GetByIdAndUserIdAsync(
+                id,
+                currentUser.UserId,
+                cancellationToken)
                 ?? throw new ResourceNotFoundException(nameof(id));
 
             account.Deposit(request.Amount);
@@ -58,6 +73,7 @@ namespace PayFlow.Features.Accounts
         private static AccountResponse ToResponse(Account account) =>
         new(
             account.Id,
+            account.UserId,
             account.HolderName,
             account.Balance,
             account.CreatedAtUtc);
