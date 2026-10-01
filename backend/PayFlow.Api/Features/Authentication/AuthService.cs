@@ -16,8 +16,10 @@ namespace PayFlow.Features.Authentication
         IValidator<LoginRequest> validator,
         ITokenService tokenService,
         IRefreshTokenRepository refreshTokenRepository,
-        IOptions<JwtSettings> jwtOptions)
+        IOptions<JwtSettings> jwtOptions,
+        TimeProvider? timeProvider = null)
     {
+        private readonly TimeProvider clock = timeProvider ?? TimeProvider.System;
         public async Task<LoginResponse> LoginAsync(
             LoginRequest request,
             CancellationToken cancellationToken = default)
@@ -64,7 +66,7 @@ namespace PayFlow.Features.Authentication
                 throw InvalidRefreshToken();
             }
 
-            if (currentToken.ExpiresAtUtc <= DateTime.UtcNow)
+            if (currentToken.ExpiresAtUtc <= clock.GetUtcNow().UtcDateTime)
             {
                 currentToken.Revoke("Token expirado");
                 await refreshTokenRepository.SaveChangesAsync(cancellationToken);
@@ -127,8 +129,9 @@ namespace PayFlow.Features.Authentication
             var refreshToken = new RefreshToken(
                 user.Id,
                 tokenService.HashRefreshToken(plainTextRefreshToken),
-                DateTime.UtcNow.AddDays(jwtOptions.Value.RefreshTokenExpirationDays),
-                currentToken?.FamilyId);
+                clock.GetUtcNow().UtcDateTime.AddDays(jwtOptions.Value.RefreshTokenExpirationDays),
+                currentToken?.FamilyId,
+                clock);
 
             if (currentToken is not null)
                 currentToken.Revoke("Token rotacionado", refreshToken.Id);

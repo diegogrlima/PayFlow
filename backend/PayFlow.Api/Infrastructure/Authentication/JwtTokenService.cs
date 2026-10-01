@@ -10,8 +10,10 @@ using System.Text;
 namespace PayFlow.Infrastructure.Authentication
 {
     public class JwtTokenService(
-        IOptions<JwtSettings> options) : ITokenService
+        IOptions<JwtSettings> options,
+        TimeProvider? timeProvider = null) : ITokenService
     {
+        private readonly TimeProvider clock = timeProvider ?? TimeProvider.System;
         public string GenerateToken(User user)
         {
             var keyBytes = Convert.FromBase64String(
@@ -33,7 +35,7 @@ namespace PayFlow.Infrastructure.Authentication
                 securityKey,
                 SecurityAlgorithms.HmacSha256);
 
-            var expires = DateTime.UtcNow.AddMinutes(
+            var expires = clock.GetUtcNow().UtcDateTime.AddMinutes(
                 options.Value.ExpirationMinutes);
 
             var token = new JwtSecurityToken(

@@ -2,26 +2,30 @@
 {
     public class RefreshToken
     {
+        private readonly TimeProvider clock = TimeProvider.System;
         private RefreshToken() { }
 
         public RefreshToken(
             Guid userId,
             string tokenHash,
             DateTime expiresAtUtc,
-            Guid? familyId = null)
+            Guid? familyId = null,
+            TimeProvider? timeProvider = null)
         {
+            clock = timeProvider ?? TimeProvider.System;
+            var now = clock.GetUtcNow().UtcDateTime;
             if (userId == Guid.Empty)
                 throw new ArgumentException("O usuário é obrigatório.", nameof(userId));
             if (string.IsNullOrWhiteSpace(tokenHash))
                 throw new ArgumentException("O hash do token é obrigatório.", nameof(tokenHash));
-            if (expiresAtUtc <= DateTime.UtcNow)
+            if (expiresAtUtc <= now)
                 throw new ArgumentException("A expiração deve estar no futuro.", nameof(expiresAtUtc));
 
             Id = Guid.NewGuid();
             UserId = userId;
             TokenHash = tokenHash;
             FamilyId = familyId ?? Id;
-            CreatedAtUtc = DateTime.UtcNow;
+            CreatedAtUtc = now;
             ExpiresAtUtc = expiresAtUtc;
         }
 
@@ -43,14 +47,14 @@
 
         public string? RevocationReason { get; private set; }
 
-        public bool IsActive => RevokedAtUtc is null && ExpiresAtUtc > DateTime.UtcNow;
+        public bool IsActive => RevokedAtUtc is null && ExpiresAtUtc > clock.GetUtcNow().UtcDateTime;
 
         public void Revoke(string reason, Guid? replacedByTokenId = null)
         {
             if (RevokedAtUtc is not null)
                 return;
 
-            RevokedAtUtc = DateTime.UtcNow;
+            RevokedAtUtc = clock.GetUtcNow().UtcDateTime;
             ReplacedByTokenId = replacedByTokenId;
             RevocationReason = reason;
         }
