@@ -50,7 +50,9 @@ coverage.*
 *.coveragexml
 *.trx
 
-# Local experiment that temporarily mutates production source
+# Local test documentation and verification scripts
+backend/PayFlow.Api.Tests/README.md
+backend/PayFlow.Api.Tests/verify-isolation.ps1
 backend/PayFlow.Api.Tests/verify-regressions.ps1
 
 # IDE and user-specific files
