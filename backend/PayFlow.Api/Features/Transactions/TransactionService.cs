@@ -1,9 +1,10 @@
 using FluentValidation;
-using PayFlow.Features.Transactions.DTOs;
-using PayFlow.Domain.Entities;
+using Microsoft.Data.SqlClient;
 using PayFlow.Common.Exceptions;
-using PayFlow.Infrastructure.Repositories.Interfaces;
+using PayFlow.Domain.Entities;
 using PayFlow.Features.Authentication.Interfaces;
+using PayFlow.Features.Transactions.DTOs;
+using PayFlow.Infrastructure.Repositories.Interfaces;
 
 namespace PayFlow.Features.Transactions
 {
@@ -72,6 +73,14 @@ namespace PayFlow.Features.Transactions
                 var response = ToResponse(transaction);
 
                 return response;
+            }
+            catch (Exception exception) when (IsDeadlock(exception))
+            {
+                await unitOfWork.RollbackAsync(CancellationToken.None);
+
+                throw new ConflictException(
+                    "A transferência foi cancelada por um conflito " +
+                   "com outra operação simultânea. Tente novamente.");
             }
 
             catch
@@ -146,5 +155,18 @@ namespace PayFlow.Features.Transactions
                 transaction.Amount,
                 transaction.Status.ToString(),
                 transaction.CreatedAtUtc);
+
+        private static bool IsDeadlock(Exception exception)
+        {
+            for (Exception? current = exception;
+                 current is not null;
+                 current = current.InnerException)
+            {
+                if (current is SqlException sql && sql.Number == 1205)
+                    return true;
+            }
+
+            return false;
+        }
     }
 }
