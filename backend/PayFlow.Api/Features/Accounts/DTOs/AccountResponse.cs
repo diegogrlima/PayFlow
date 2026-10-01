@@ -5,7 +5,11 @@ namespace PayFlow.Features.Accounts.DTOs
         Guid userId,
         string holderName,
         decimal balance,
-        DateTime createdAtUtc);
+        DateTime createdAtUtc,
+        PayFlow.Domain.Entities.AccountType accountType,
+        PayFlow.Domain.Entities.TransferKeyType? transferKeyType,
+        string? transferKey,
+        bool hasTransferKey);
 
 
 }

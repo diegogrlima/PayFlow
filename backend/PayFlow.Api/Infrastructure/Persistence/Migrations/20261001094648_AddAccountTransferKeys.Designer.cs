@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PayFlow.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace PayFlow.Migrations
+namespace PayFlow.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PayFlowDbContext))]
-    partial class PayFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261001094648_AddAccountTransferKeys")]
+    partial class AddAccountTransferKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,10 +30,8 @@ namespace PayFlow.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AccountType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Balance")
                         .HasPrecision(18, 2)
@@ -48,9 +49,8 @@ namespace PayFlow.Migrations
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)");
 
-                    b.Property<string>("TransferKeyType")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int?>("TransferKeyType")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -65,11 +65,11 @@ namespace PayFlow.Migrations
 
                     b.ToTable("TB_Accounts", null, t =>
                         {
-                            t.HasCheckConstraint("CK_TB_Accounts_AccountType", "[AccountType] IN ('Individual', 'Business')");
+                            t.HasCheckConstraint("CK_TB_Accounts_AccountType", "[AccountType] IN (1, 2)");
 
                             t.HasCheckConstraint("CK_TB_Accounts_Balance_NonNegative", "[Balance] >= 0");
 
-                            t.HasCheckConstraint("CK_TB_Accounts_TransferKey", "([TransferKeyType] IS NULL AND [TransferKey] IS NULL) OR ([TransferKeyType] IN ('Email', 'Cpf', 'Phone', 'Cnpj') AND [TransferKeyType] IS NOT NULL AND [TransferKey] IS NOT NULL AND LEN([TransferKey]) > 0)");
+                            t.HasCheckConstraint("CK_TB_Accounts_TransferKey", "([TransferKeyType] IS NULL AND [TransferKey] IS NULL) OR ([TransferKeyType] IN (1, 2, 3, 4) AND [TransferKeyType] IS NOT NULL AND [TransferKey] IS NOT NULL AND LEN([TransferKey]) > 0)");
                         });
                 });
 

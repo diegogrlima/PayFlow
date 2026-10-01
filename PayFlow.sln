@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{1AE8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayFlow.Api", "backend\PayFlow.Api\PayFlow.Api.csproj", "{E7B317A5-5E22-478F-AAAF-2338C0ABE101}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayFlow.Api.Tests", "backend\PayFlow.Api.Tests\PayFlow.Api.Tests.csproj", "{6EC67A76-B463-43A1-AF23-AA95154CD6E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,11 +31,24 @@ Global
 		{E7B317A5-5E22-478F-AAAF-2338C0ABE101}.Release|x64.Build.0 = Release|Any CPU
 		{E7B317A5-5E22-478F-AAAF-2338C0ABE101}.Release|x86.ActiveCfg = Release|Any CPU
 		{E7B317A5-5E22-478F-AAAF-2338C0ABE101}.Release|x86.Build.0 = Release|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Debug|x64.Build.0 = Debug|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Debug|x86.Build.0 = Debug|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Release|x64.ActiveCfg = Release|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Release|x64.Build.0 = Release|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Release|x86.ActiveCfg = Release|Any CPU
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E7B317A5-5E22-478F-AAAF-2338C0ABE101} = {1AE8ACA6-933B-BF2A-3671-3E2EAC007D16}
+		{6EC67A76-B463-43A1-AF23-AA95154CD6E8} = {1AE8ACA6-933B-BF2A-3671-3E2EAC007D16}
 	EndGlobalSection
 EndGlobal

@@ -7,16 +7,8 @@ namespace PayFlow.Features.Transactions.Validators
     {
         public CreateTransactionRequestValidator()
         {
-            RuleFor(x => x.SourceAccountId)
-                .NotEmpty()
-                .WithMessage("A conta de origem é obrigatória.");
-
-            RuleFor(x => x.DestinationAccountId)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .WithMessage("A conta de destino é obrigatória.")
-                .NotEqual(x => x.SourceAccountId)
-                .WithMessage("A conta de destino deve ser diferente da conta de origem.");
+            RuleFor(x => x.DestinationKeyType).IsInEnum();
+            RuleFor(x => x.DestinationKey).NotEmpty().MaximumLength(254);
 
             RuleFor(x => x.Amount)
                 .Cascade(CascadeMode.Stop)

@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PayFlow.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace PayFlow.Migrations
+namespace PayFlow.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PayFlowDbContext))]
-    partial class PayFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261001103220_StoreAccountEnumsAsText")]
+    partial class StoreAccountEnumsAsText
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

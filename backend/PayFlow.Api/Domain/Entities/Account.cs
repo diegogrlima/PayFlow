@@ -6,17 +6,39 @@ namespace PayFlow.Domain.Entities
         {
         }
 
-        public Account(Guid userId, string holderName, decimal initialBalance = 0)
+        public Account(Guid userId, string holderName, decimal initialBalance = 0, AccountType accountType = AccountType.Individual)
         {
             ValidateUserId(userId);
             ValidateHolderName(holderName);
             ValidateBalance(initialBalance);
 
+            if (!Enum.IsDefined(accountType)) throw new ArgumentException("Tipo de conta inv\u00e1lido.");
+            AccountType = accountType;
             Id = Guid.NewGuid();
             UserId = userId;
             HolderName = holderName.Trim();
             Balance = initialBalance;
             CreatedAtUtc = DateTime.UtcNow;
+        }
+
+        public AccountType AccountType { get; private set; }
+        public TransferKeyType? TransferKeyType { get; private set; }
+        public string? TransferKey { get; private set; }
+
+        public void SetTransferKey(TransferKeyType type, string value)
+        {
+            if ((AccountType == AccountType.Individual && type == global::PayFlow.Domain.Entities.TransferKeyType.Cnpj)
+                || (AccountType == AccountType.Business && type == global::PayFlow.Domain.Entities.TransferKeyType.Cpf))
+                throw new ArgumentException("Chave incompat\u00edvel com o tipo da conta.");
+            var normalized = TransferKeyNormalizer.Normalize(type, value);
+            TransferKeyType = type;
+            TransferKey = normalized;
+        }
+
+        public void RemoveTransferKey()
+        {
+            TransferKeyType = null;
+            TransferKey = null;
         }
 
         public Guid Id { get; private set; }

@@ -14,6 +14,7 @@ namespace PayFlow.Features.Transactions
         IValidator<CreateTransactionRequest> transactionValidator)
     {
         public async Task<TransactionResponse> AddTransactionAsync(
+            Guid sourceAccountId,
             CreateTransactionRequest request,
             CancellationToken cancellationToken)
         {
@@ -21,30 +22,36 @@ namespace PayFlow.Features.Transactions
                 request,
                 cancellationToken);
 
+            string destinationKey;
+            try { destinationKey = TransferKeyNormalizer.Normalize(request.DestinationKeyType, request.DestinationKey); }
+            catch (ArgumentException) { throw new ValidationException([new FluentValidation.Results.ValidationFailure(nameof(request.DestinationKey), "Tipo ou formato da chave de destino inv\u00e1lido.")]); }
             await unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
             {
                 var sourceAccount = await accountRepository.GetByIdAndUserIdAsync(
-                    request.SourceAccountId,
+                    sourceAccountId,
                     currentUser.UserId,
                     cancellationToken);
 
                 if (sourceAccount is null)
                 {
                     throw new ResourceNotFoundException(
-                        $"Conta de origem '{request.SourceAccountId}' não encontrada.");
+                        $"Conta de origem '{sourceAccountId}' não encontrada.");
                 }
 
-                var destinationAccount = await accountRepository.GetByIdAsync(
-                    request.DestinationAccountId,
+                var destinationAccount = await accountRepository.GetByTransferKeyAsync(
+                    request.DestinationKeyType, destinationKey,
                     cancellationToken);
 
                 if (destinationAccount is null)
                 {
                     throw new ResourceNotFoundException(
-                        $"Conta de destino '{request.DestinationAccountId}' não encontrada.");
+                        "Chave de destino nao encontrada.");
                 }
+
+                if (sourceAccount.Id == destinationAccount.Id)
+                    throw new BusinessRuleException("A conta de destino deve ser diferente da origem.");
 
                 if (sourceAccount.Balance < request.Amount)
                 {
@@ -69,7 +76,7 @@ namespace PayFlow.Features.Transactions
 
             catch
             {
-                await unitOfWork.RollbackAsync(cancellationToken);
+                await unitOfWork.RollbackAsync(CancellationToken.None);
                 throw;
             }
         }

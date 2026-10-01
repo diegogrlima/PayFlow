@@ -7,6 +7,12 @@ namespace PayFlow.Infrastructure.Repositories
 {
     public class AccountRepository(PayFlowDbContext dbContext) : IAccountRepository
     {
+        public async Task<IReadOnlyList<Account>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+            => await dbContext.Accounts.AsNoTracking().Where(a => a.UserId == userId).OrderBy(a => a.CreatedAtUtc).ToListAsync(cancellationToken);
+
+        public Task<Account?> GetByTransferKeyAsync(TransferKeyType type, string key, CancellationToken cancellationToken = default)
+            => dbContext.Accounts.SingleOrDefaultAsync(a => a.TransferKeyType == type && a.TransferKey == key, cancellationToken);
+
         public Task<Account?> GetByIdAsync(
             Guid id,
             CancellationToken cancellationToken = default)
@@ -31,15 +37,24 @@ namespace PayFlow.Infrastructure.Repositories
             CancellationToken cancellationToken = default)
         {
             await dbContext.Accounts.AddAsync(account, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            try { await dbContext.SaveChangesAsync(cancellationToken); }
+            catch (DbUpdateException exception) when (exception.InnerException is Microsoft.Data.SqlClient.SqlException sql
+                && sql.Number is 2601 or 2627 && sql.Message.Contains("IX_TB_Accounts_TransferKey"))
+            {
+                throw new PayFlow.Common.Exceptions.ConflictException("Chave j\u00e1 cadastrada em outra conta.");
+            }
         }
 
         public async Task UpdateAsync(
             Account account,
             CancellationToken cancellationToken = default)
         {
-            dbContext.Accounts.Update(account);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            try { await dbContext.SaveChangesAsync(cancellationToken); }
+            catch (DbUpdateException exception) when (exception.InnerException is Microsoft.Data.SqlClient.SqlException sql
+                && sql.Number is 2601 or 2627 && sql.Message.Contains("IX_TB_Accounts_TransferKey"))
+            {
+                throw new PayFlow.Common.Exceptions.ConflictException("Chave j\u00e1 cadastrada em outra conta.");
+            }
         }
     }
 }

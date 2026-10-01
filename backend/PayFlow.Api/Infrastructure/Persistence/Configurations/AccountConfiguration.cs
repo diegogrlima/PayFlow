@@ -10,6 +10,14 @@ namespace PayFlow.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("TB_Accounts");
 
+            builder.Property(a => a.AccountType).HasConversion<string>().HasMaxLength(20).IsRequired();
+            builder.Property(a => a.TransferKeyType).HasConversion<string>().HasMaxLength(20);
+            builder.Property(a => a.TransferKey).HasMaxLength(254);
+            builder.HasIndex(a => a.TransferKey).IsUnique().HasFilter("[TransferKey] IS NOT NULL");
+            builder.ToTable("TB_Accounts", table => {
+                table.HasCheckConstraint("CK_TB_Accounts_AccountType", "[AccountType] IN ('Individual', 'Business')");
+                table.HasCheckConstraint("CK_TB_Accounts_TransferKey", "([TransferKeyType] IS NULL AND [TransferKey] IS NULL) OR ([TransferKeyType] IN ('Email', 'Cpf', 'Phone', 'Cnpj') AND [TransferKeyType] IS NOT NULL AND [TransferKey] IS NOT NULL AND LEN([TransferKey]) > 0)");
+            });
             builder.HasKey(account => account.Id);
 
             builder.Property(account => account.Id)

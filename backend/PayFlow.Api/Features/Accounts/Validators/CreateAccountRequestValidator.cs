@@ -8,6 +8,7 @@ namespace PayFlow.Features.Accounts.Validators
 
         public CreateAccountRequestValidator()
         {
+            RuleFor(x => x.AccountType).IsInEnum();
             RuleFor(x => x.HolderName)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()

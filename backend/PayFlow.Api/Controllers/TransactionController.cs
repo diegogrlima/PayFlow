@@ -10,19 +10,6 @@ namespace PayFlow.Controllers
     [Authorize]
     public class TransactionController(TransactionService service) : ControllerBase
     {
-        [HttpPost]
-        public async Task<ActionResult<TransactionResponse>> AddTransaction(
-            CreateTransactionRequest request,
-            CancellationToken cancellationToken)
-        {
-            var result = await service.AddTransactionAsync(request, cancellationToken);
-
-            return CreatedAtAction(
-                nameof(GetById),
-                new { result.Id },
-                result);
-        }
-
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<TransactionResponse>> GetById(
             Guid id,

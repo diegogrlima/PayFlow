@@ -13,6 +13,11 @@ namespace PayFlow.Infrastructure.DependencyInjection
 
             services.AddDbContext<PayFlowDbContext>(
                     options => options.UseSqlServer(connectionString)
+                        // SQL duplicate-key exceptions can contain the full transfer key.
+                        // Surface the sanitized API exception instead of logging the raw EF failure.
+                        .ConfigureWarnings(warnings => warnings.Ignore(
+                            Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandError,
+                            Microsoft.EntityFrameworkCore.Diagnostics.CoreEventId.SaveChangesFailed))
                 );
 
             return services;

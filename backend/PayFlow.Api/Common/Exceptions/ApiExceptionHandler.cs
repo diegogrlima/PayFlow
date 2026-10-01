@@ -34,6 +34,8 @@ namespace PayFlow.Common.Exceptions
                     }
                 },
 
+                ConflictException => new ProblemDetails { Status = 409, Title = "Conflito", Detail = exception.Message },
+
                 ResourceNotFoundException => new ProblemDetails
                 {
                     Status = StatusCodes.Status404NotFound,

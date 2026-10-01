@@ -24,9 +24,9 @@ namespace PayFlow.Features.Accounts
 
             _ = await userRepository.GetByIdAsync(userId, cancellationToken)
                 ?? throw new ResourceNotFoundException(
-                    $"Usuário '{userId}' não encontrado.");
+                    $"UsuÃ¡rio '{userId}' nÃ£o encontrado.");
 
-            var account = new Account(userId, request.HolderName);
+            var account = new Account(userId, request.HolderName, accountType: request.AccountType);
 
             await repository.AddAsync(account, cancellationToken);
 
@@ -70,12 +70,42 @@ namespace PayFlow.Features.Accounts
             return account.Balance;
         }
 
+        public async Task<IReadOnlyList<AccountResponse>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            var accounts = await repository.GetByUserIdAsync(currentUser.UserId, cancellationToken);
+            return accounts.Select(ToResponse).ToList();
+        }
+
+        public async Task<AccountResponse> SetTransferKeyAsync(Guid id, SetTransferKeyRequest request, CancellationToken cancellationToken)
+        {
+            var account = await repository.GetByIdAndUserIdAsync(id, currentUser.UserId, cancellationToken)
+                ?? throw new ResourceNotFoundException("Conta n\u00e3o encontrada.");
+            try { account.SetTransferKey(request.Type, request.Value); }
+            catch (ArgumentException) { throw new ValidationException([new FluentValidation.Results.ValidationFailure(nameof(request.Value), "Tipo ou formato de chave inv\u00e1lido ou incompat\u00edvel com a conta.")]); }
+            var existing = await repository.GetByTransferKeyAsync(request.Type, account.TransferKey!, cancellationToken);
+            if (existing is not null && existing.Id != id)
+                throw new ConflictException("Chave j\u00e1 cadastrada em outra conta.");
+            await repository.UpdateAsync(account, cancellationToken);
+            return ToResponse(account);
+        }
+
+        public async Task RemoveTransferKeyAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var account = await repository.GetByIdAndUserIdAsync(id, currentUser.UserId, cancellationToken)
+                ?? throw new ResourceNotFoundException("Conta n\u00e3o encontrada.");
+            account.RemoveTransferKey();
+            await repository.UpdateAsync(account, cancellationToken);
+        }
+
         private static AccountResponse ToResponse(Account account) =>
         new(
             account.Id,
             account.UserId,
             account.HolderName,
             account.Balance,
-            account.CreatedAtUtc);
+            account.CreatedAtUtc,
+            account.AccountType, account.TransferKeyType,
+            TransferKeyNormalizer.Mask(account.TransferKeyType, account.TransferKey),
+            account.TransferKey is not null);
     }
 }

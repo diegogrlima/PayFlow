@@ -14,6 +14,36 @@ namespace PayFlow.Controllers
         AccountService service,
         TransactionService transactionService) : ControllerBase
     {
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<AccountResponse>>> GetAll(CancellationToken cancellationToken)
+            => Ok(await service.GetAllAsync(cancellationToken));
+
+        [HttpPut("{id:guid}/transfer-key")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
+        public async Task<ActionResult<AccountResponse>> SetTransferKey(Guid id, SetTransferKeyRequest request, CancellationToken cancellationToken)
+            => Ok(await service.SetTransferKeyAsync(id, request, cancellationToken));
+
+        [HttpDelete("{id:guid}/transfer-key")]
+        public async Task<IActionResult> RemoveTransferKey(Guid id, CancellationToken cancellationToken)
+        {
+            await service.RemoveTransferKeyAsync(id, cancellationToken);
+            return NoContent();
+        }
+
+        [HttpPost("{sourceAccountId:guid}/transfers")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(422)]
+        public async Task<ActionResult<TransactionResponse>> AddTransfer(Guid sourceAccountId, CreateTransactionRequest request, CancellationToken cancellationToken)
+        {
+            var result = await transactionService.AddTransactionAsync(sourceAccountId, request, cancellationToken);
+            return CreatedAtAction(nameof(TransactionController.GetById), "Transaction", new { id = result.Id }, result);
+        }
+
         [HttpPost]
         public async Task<ActionResult<AccountResponse>> Create(
             CreateAccountRequest request,
