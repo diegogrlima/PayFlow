@@ -15,6 +15,7 @@ builder.Services.AddRepositories();
 builder.Services.AddServices();
 
 builder.Services.AddJwtConfiguration(builder.Configuration);
+builder.Services.AddCorsConfiguration(builder.Configuration);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
@@ -29,6 +30,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
+app.UseCors(CorsConfiguration.FrontendPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
